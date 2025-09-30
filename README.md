@@ -1,50 +1,64 @@
-# 💰 Sistema de Controle Financeiro
+# 💰 Sistema de Controle Financeiro Pessoal
 
-Um sistema completo de controle financeiro desenvolvido em Django, permitindo gerenciar carteiras, investimentos e transações de forma organizada e intuitiva.
+![Django](https://img.shields.io/badge/Django-5.2.5-092E20?style=for-the-badge&logo=django&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 
-## 🚀 Funcionalidades
+## 📋 Sobre o Projeto
 
-### 📊 Dashboard Principal
-- Visão geral de todas as carteiras do usuário
-- Resumo financeiro com saldos e estatísticas
-- Interface responsiva e moderna
+Este é um **sistema de controle financeiro pessoal** desenvolvido em Django. O sistema permite que usuários gerenciem suas finanças pessoais através de carteiras digitais, categorias de investimentos e transações detalhadas.
 
-### 💼 Gerenciamento de Carteiras
-- Criar múltiplas carteiras personalizadas
-- Editar e excluir carteiras existentes
-- Visualizar detalhes de cada carteira
+### 🎯 Objetivos do Projeto
+- **Aprendizado**: Aprimorar conhecimentos do framework Django
+- **Prática**: Implementar funcionalidades reais de um sistema financeiro
 
-### 📈 Controle de Investimentos
-- Organizar investimentos por categorias
-- Categorias hierárquicas (categorias e subcategorias)
-- Acompanhamento individual de cada investimento
+## ✨ Funcionalidades Principais
 
-### 💸 Gestão de Transações
-- Registrar depósitos, saques e dividendos
-- Histórico completo de transações
-- Filtros por data e tipo de transação
-- Cálculo automático de saldos
+### 🏦 Gestão de Carteiras
+- ✅ Criação e gerenciamento de múltiplas carteiras
+- ✅ Cálculo automático do saldo total
+- ✅ Histórico de transações por carteira
+
+### 📊 Categorias e Investimentos
+- ✅ Sistema hierárquico de categorias (categorias e subcategorias)
+- ✅ Gestão de investimentos por categoria
+- ✅ Controle de saldo por investimento
+
+### 💸 Transações Financeiras
+- ✅ **Depósitos**: Adição de dinheiro às carteiras/investimentos
+- ✅ **Saques**: Retirada de valores
+- ✅ **Dividendos**: Recebimento de rendimentos
+- ✅ Histórico completo com datas e descrições
 
 ### 👤 Sistema de Usuários
-- Cadastro e login de usuários
-- Perfil personalizado
-- Autenticação segura
+- ✅ Autenticação e autorização
+- ✅ Perfis de usuário personalizados
+- ✅ Isolamento de dados por usuário
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **Backend:** Django 5.2.5
-- **Frontend:** HTML5, CSS3, JavaScript
-- **Banco de Dados:** SQLite (desenvolvimento)
-- **Autenticação:** Sistema nativo do Django
-- **Interface:** Templates Django com CSS responsivo
+### Backend
+- **Django 5.2.5** - Framework web principal
+- **Python 3.13** - Linguagem de programação
+- **SQLite** - Banco de dados (desenvolvimento)
 
-## 📋 Pré-requisitos
+### Frontend
+- **HTML5** - Estrutura das páginas
+- **CSS3** - Estilização e responsividade
+- **Django Templates** - Sistema de templates
 
-- Python 3.8+
-- pip (gerenciador de pacotes Python)
-- Git
+### Ferramentas de Desenvolvimento
+- **Git** - Controle de versão
+- **Virtual Environment** - Isolamento de dependências
+- **Django Admin** - Interface administrativa
 
-## 🔧 Instalação
+## 🚀 Como Executar o Projeto
+
+### Pré-requisitos
+- Python 3.8+ instalado
+- Git instalado
 
 ### 1. Clone o repositório
 ```bash
@@ -52,180 +66,104 @@ git clone https://github.com/SEU_USUARIO/controle-financeiro.git
 cd controle-financeiro
 ```
 
-### 2. Crie um ambiente virtual
+### 2. Crie e ative o ambiente virtual
 ```bash
+# Windows
 python -m venv venv
-```
-
-### 3. Ative o ambiente virtual
-
-**Windows:**
-```bash
 venv\Scripts\activate
-```
 
-**Linux/Mac:**
-```bash
+# Linux/Mac
+python3 -m venv venv
 source venv/bin/activate
 ```
 
-### 4. Instale as dependências
+### 3. Instale as dependências
 ```bash
 pip install -r requirements.txt
 ```
 
-### 5. Execute as migrações
+### 4. Execute as migrações
 ```bash
 python manage.py migrate
 ```
 
-### 6. Crie um superusuário (opcional)
+### 5. Crie um superusuário (opcional)
 ```bash
 python manage.py createsuperuser
 ```
 
-### 7. Execute o servidor de desenvolvimento
+### 6. Execute o servidor de desenvolvimento
 ```bash
 python manage.py runserver
 ```
 
-Acesse `http://127.0.0.1:8000` no seu navegador.
+### 7. Acesse o sistema
+- **Aplicação**: http://127.0.0.1:8000/
+- **Admin**: http://127.0.0.1:8000/admin/
 
-## 📁 Estrutura do Projeto
+## 📱 Demonstração
 
-```
-controle-financeiro/
-├── config/                 # Configurações do Django
-│   ├── settings.py        # Configurações principais
-│   ├── urls.py           # URLs principais
-│   └── wsgi.py           # Configuração WSGI
-├── finances/             # App principal de finanças
-│   ├── models.py         # Modelos de dados
-│   ├── views.py          # Lógicas de negócio
-│   ├── forms.py          # Formulários
-│   ├── urls.py           # URLs da app
-│   └── templates/        # Templates HTML
-├── users/                # App de usuários
-│   ├── models.py         # Modelos de usuário
-│   ├── views.py          # Views de autenticação
-│   └── templates/        # Templates de login/cadastro
-├── landing/              # App da página inicial
-├── static/               # Arquivos estáticos (CSS, JS)
-├── templates/            # Templates base
-├── requirements.txt      # Dependências do projeto
-└── manage.py            # Script de gerenciamento Django
-```
+### Dashboard Principal
+O dashboard oferece uma visão geral das carteiras do usuário com:
+- Lista de carteiras criadas
+- Saldo total de cada carteira
+- Ações rápidas (criar, editar, excluir)
 
-## 🗄️ Modelos de Dados
+### Gestão de Carteiras
+- Interface intuitiva para criação de novas carteiras
+- Edição e exclusão de carteiras existentes
+- Visualização detalhada de cada carteira
+
+### Sistema de Transações
+- Formulários para registro de depósitos, saques e dividendos
+- Histórico completo de transações
+- Filtros por data e tipo de transação
+
+
+## 📊 Modelos de Dados
 
 ### Wallet (Carteira)
-- `user`: Usuário proprietário
-- `name`: Nome da carteira
-- `created_at`: Data de criação
+- Vinculada a um usuário
+- Nome personalizável
+- Cálculo automático de saldo
 
 ### Category (Categoria)
-- `wallet`: Carteira associada
-- `name`: Nome da categoria
-- `parent`: Categoria pai (para subcategorias)
+- Sistema hierárquico (categorias e subcategorias)
+- Vinculada a uma carteira
 
 ### Investment (Investimento)
-- `wallet`: Carteira associada
-- `category`: Categoria do investimento
-- `name`: Nome do investimento
-- `created_at`: Data de criação
+- Vinculado a uma carteira e categoria
+- Controle de saldo individual
 
 ### Transaction (Transação)
-- `investment`: Investimento associado (opcional)
-- `wallet`: Carteira associada (opcional)
-- `amount`: Valor da transação
-- `transaction_type`: Tipo (deposit/withdrawal/dividend)
-- `date`: Data da transação
-- `description`: Descrição opcional
+- Tipos: depósito, saque, dividendo
+- Vinculada a carteira ou investimento
+- Histórico completo com datas
 
-## 🎯 Como Usar
+## 🔧 Funcionalidades Técnicas Implementadas
 
-### 1. Primeiro Acesso
-- Acesse a página inicial
-- Clique em "Cadastrar" para criar uma conta
-- Faça login com suas credenciais
+- **Autenticação**: Sistema completo de login/logout
+- **Validação**: Formulários com validação de dados
+- **Agregações**: Cálculos automáticos de saldos
+- **Templates**: Sistema de templates Django com herança
+- **Static Files**: Gerenciamento de CSS e arquivos estáticos
 
-### 2. Criando uma Carteira
-- No dashboard, clique em "Nova Carteira"
-- Digite um nome para sua carteira
-- Confirme a criação
+## 🎓 Conceitos Django Aplicados
 
-### 3. Gerenciando Investimentos
-- Acesse uma carteira específica
-- Crie categorias para organizar seus investimentos
-- Adicione investimentos dentro das categorias
+- **Models**: Definição de modelos com relacionamentos
+- **Views**: Views baseadas em função com decorators
+- **Forms**: Formulários Django com validação
+- **Templates**: Sistema de templates com herança
+- **Admin**: Interface administrativa personalizada
+- **Authentication**: Sistema de autenticação integrado
 
-### 4. Registrando Transações
-- Selecione um investimento ou carteira
-- Clique em "Nova Transação"
-- Preencha os dados (valor, tipo, data, descrição)
-- Salve a transação
+## 🚧 Próximas Funcionalidades
 
-## 🔒 Segurança
+- [ ] Gráficos e relatórios financeiros
+- [ ] Exportação de dados (PDF/Excel)
+- [ ] API REST com Django REST Framework
+- [ ] Notificações por email
+- [ ] Dashboard com métricas avançadas
+- [ ] Integração com APIs de cotações
+- [ ] Sistema de metas financeiras
 
-- Autenticação obrigatória para todas as funcionalidades
-- Cada usuário só acessa suas próprias carteiras e dados
-- Validação de dados em formulários
-- Proteção CSRF habilitada
-
-## 🚀 Deploy em Produção
-
-### Configurações Recomendadas
-
-1. **Banco de Dados:** Configure PostgreSQL ou MySQL
-2. **Variáveis de Ambiente:** Use `python-decouple` para configurações sensíveis
-3. **Arquivos Estáticos:** Configure `whitenoise` ou serviço de CDN
-4. **Servidor:** Use `gunicorn` para produção
-5. **HTTPS:** Configure certificado SSL
-
-### Exemplo de configuração para produção:
-```python
-# settings.py
-DEBUG = False
-ALLOWED_HOSTS = ['seu-dominio.com']
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'controle_financeiro',
-        'USER': 'usuario',
-        'PASSWORD': 'senha',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
-```
-
-## 🤝 Contribuição
-
-1. Faça um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-## 📝 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
-
-## 👨‍💻 Autor
-
-**Seu Nome**
-- GitHub: [@seuusuario](https://github.com/seuusuario)
-- LinkedIn: [Seu Perfil](https://linkedin.com/in/seuperfil)
-
-## 📞 Suporte
-
-Se você encontrar algum problema ou tiver dúvidas:
-
-1. Verifique se seguiu todos os passos de instalação
-2. Consulte a documentação do Django
-3. Abra uma issue no GitHub
-4. Entre em contato através do email: seuemail@exemplo.com
-
----
-
-⭐ **Se este projeto te ajudou, considere dar uma estrela no GitHub!**
