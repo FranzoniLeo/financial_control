@@ -1,0 +1,36 @@
+# Django e dependências principais
+Django==5.2.5
+asgiref==3.9.1
+sqlparse==0.5.3
+tzdata==2025.2
+
+# Pacotes opcionais para desenvolvimento
+# Descomente conforme necessário:
+
+# Para banco de dados PostgreSQL
+# psycopg2-binary==2.9.9
+
+# Para banco de dados MySQL
+# mysqlclient==2.2.4
+
+# Para ambiente de desenvolvimento
+# python-decouple==3.8
+
+# Para formulários mais avançados
+# django-crispy-forms==2.1
+# crispy-bootstrap5==0.7
+
+# Para autenticação social
+# django-allauth==0.57.0
+
+# Para API REST
+# djangorestframework==3.14.0
+# django-cors-headers==4.3.1
+
+# Para testes
+# pytest==7.4.3
+# pytest-django==4.7.0
+
+# Para produção
+# gunicorn==21.2.0
+# whitenoise==6.6.0
