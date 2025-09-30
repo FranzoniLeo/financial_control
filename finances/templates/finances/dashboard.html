@@ -1,0 +1,397 @@
+{% extends "base_header.html" %}
+{% load static %}
+{% block content %}
+
+    <!-- conteúdo principal da página-->
+    <div class="container">
+
+        <h2>Minhas Carteiras</h2>
+        {% for wallet in wallets %}
+            <div class="card mb-2 p-3 wallet-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <a href="{% url 'wallet_detail' wallet.id %}" class="text-decoration-none text-dark wallet-link">
+                        <div class="wallet-info">
+                            <h5>{{ wallet.name }}</h5>
+                            <p>Total: R$ {{ wallet.get_total_balance }}</p>
+                        </div>
+                    </a>
+                    <button type="button" 
+                            class="btn btn-outline-secondary edit-wallet-btn" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#editWalletModal"
+                            data-wallet-id="{{ wallet.id }}"
+                            data-wallet-name="{{ wallet.name }}"
+                            title="Editar carteira">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+            </div>
+        {% empty %}
+            <p>Nenhuma carteira encontrada. Clique no botão + para criar sua primeira carteira.</p>
+        {% endfor %}
+
+        <!-- Botão para abrir o modal de nova carteira -->
+        <button type="button" 
+                class="btn btn-success floating-add-btn" 
+                data-bs-toggle="modal" 
+                data-bs-target="#addWalletModal">
+            +
+        </button>
+
+    </div>
+
+
+    <!-- Modal para adicionar nova carteira -->
+    <div class="modal fade" id="addWalletModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background-color: #2d3748; color: white; border-radius: 12px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+                
+                <div class="modal-header border-0 pb-0" style="border-bottom: 1px solid #4a5568;">
+                    <h5 class="modal-title fw-bold" style="color: white;">Nova Carteira</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+                </div>
+                
+                <div class="modal-body pt-4">
+                    <form method="post" action="{% url 'add_wallet' %}" id="walletForm">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold" style="color: white; margin-bottom: 8px;">Nome *</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   name="name" 
+                                   id="id_name"
+                                   placeholder="Digite o nome da carteira..."
+                                   required
+                                   style="background-color: #4a5568; border: 1px solid #718096; color: white; border-radius: 8px; padding: 12px; transition: border-color 0.3s ease;">
+                            
+                            <!-- Exibir erros de validação -->
+                            {% for message in messages %}
+                                {% if message.tags == 'error' and 'name:' in message %}
+                                    <div class="text-danger mt-1">
+                                        <small>{{ message }}</small>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="button" 
+                                    class="btn btn-secondary" 
+                                    data-bs-dismiss="modal"
+                                    style="background-color: #718096; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 500;">
+                                Cancelar
+                            </button>
+                            <button type="submit" 
+                                    class="btn btn-primary"
+                                    style="background-color: #174ea6; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 500;">
+                                Criar Carteira
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar carteira -->
+    <div class="modal fade" id="editWalletModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background-color: #2d3748; color: white; border-radius: 12px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+                
+                <div class="modal-header border-0 pb-0" style="border-bottom: 1px solid #4a5568;">
+                    <h5 class="modal-title fw-bold" style="color: white;">Editar Carteira</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+                </div>
+                
+                <div class="modal-body pt-4">
+                    <form method="post" id="editWalletForm">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="edit">
+                        <input type="hidden" name="wallet_id" id="edit_wallet_id">
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold" style="color: white; margin-bottom: 8px;">Nome *</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   name="name" 
+                                   id="edit_wallet_name"
+                                   placeholder="Digite o nome da carteira..."
+                                   required
+                                   style="background-color: #4a5568; border: 1px solid #718096; color: white; border-radius: 8px; padding: 12px; transition: border-color 0.3s ease;">
+                            
+                            <!-- Exibir erros de validação -->
+                            <div id="edit_error_message" class="text-danger mt-1" style="display: none;">
+                                <small id="edit_error_text"></small>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <button type="button" 
+                                    class="btn btn-danger" 
+                                    id="deleteWalletBtn"
+                                    style="background-color: #dc3545; border: none; border-radius: 8px; padding: 10px 10px; font-weight: 500;">
+                                Excluir Carteira
+                            </button>
+                            <div class="d-flex gap-2">
+                                <button type="button" 
+                                        class="btn btn-secondary" 
+                                        data-bs-dismiss="modal"
+                                        style="background-color: #718096; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 500;">
+                                    Cancelar
+                                </button>
+                                <button type="submit" 
+                                        class="btn btn-primary"
+                                        style="background-color: #174ea6; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 500;">
+                                    Salvar Alterações
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmação para exclusão -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background-color: #2d3748; color: white; border-radius: 12px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+                
+                <div class="modal-header border-0 pb-0" style="border-bottom: 1px solid #4a5568;">
+                    <h5 class="modal-title fw-bold" style="color: white;">Confirmar Exclusão</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+                </div>
+                
+                <div class="modal-body pt-4">
+                    <p>Tem certeza que deseja excluir a carteira "<span id="delete_wallet_name"></span>"?</p>
+                    <p class="text-warning"><small>Esta ação não pode ser desfeita e todos os investimentos e transações desta carteira serão perdidos.</small></p>
+                    
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <button type="button" 
+                                class="btn btn-secondary" 
+                                data-bs-dismiss="modal"
+                                style="background-color: #718096; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 500;">
+                            Cancelar
+                        </button>
+                        <button type="button" 
+                                class="btn btn-danger" 
+                                id="confirmDeleteBtn"
+                                style="background-color: #dc3545; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 500;">
+                            Excluir
+                        </button>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+
+    <!-- footer -->
+    <footer class="fixed-footer">
+        <div class="row text-center">
+
+            <div class="col card p-3 m-2">
+                <h6>Total</h6>
+                <p>R$ {{ total }}</p>
+            </div>
+
+            <div class="col card p-3 m-2">
+                <h6>Rendimento Total</h6>
+                <p>R$ {{ rendimento_total }}</p>
+            </div>
+
+            <div class="col card p-3 m-2">
+                <h6>Rendimento Mês Anterior</h6>
+                <p>R$ {{ rendimento_mes_anterior }}</p>
+            </div>
+
+            <div class="col card p-3 m-2">
+                <h6>Rendimento Mês Atual</h6>
+                <p>R$ {{ rendimento_mes_atual }}</p>
+            </div>
+
+            <div class="col card p-3 m-2">
+                <h6>Rendimentos no Ano</h6>
+                <p>R$ {{ rendimento_ano }}</p>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- Script para limpar o formulário quando o modal for fechado -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const addModalElement = document.getElementById('addWalletModal');
+            const addForm = document.getElementById('walletForm');
+            const addNameInput = document.getElementById('id_name');
+            
+            const editModalElement = document.getElementById('editWalletModal');
+            const editForm = document.getElementById('editWalletForm');
+            const editNameInput = document.getElementById('edit_wallet_name');
+            const editWalletIdInput = document.getElementById('edit_wallet_id');
+            
+            const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+            const deleteWalletNameSpan = document.getElementById('delete_wallet_name');
+            
+            // Função para limpar erros do formulário de adição
+            function clearAddErrors() {
+                const errorDivs = addForm.querySelectorAll('.text-danger');
+                errorDivs.forEach(div => div.remove());
+                addNameInput.classList.remove('is-invalid');
+            }
+            
+            // Função para limpar erros do formulário de edição
+            function clearEditErrors() {
+                const errorMessage = document.getElementById('edit_error_message');
+                errorMessage.style.display = 'none';
+                editNameInput.classList.remove('is-invalid');
+            }
+            
+            // Limpar erros quando o modal de adição for fechado
+            addModalElement.addEventListener('hidden.bs.modal', function () {
+                addForm.reset();
+                clearAddErrors();
+            });
+            
+            // Limpar erros quando o usuário começar a digitar no formulário de adição
+            addNameInput.addEventListener('input', function() {
+                clearAddErrors();
+            });
+            
+            // Limpar erros quando o modal de edição for fechado
+            editModalElement.addEventListener('hidden.bs.modal', function () {
+                editForm.reset();
+                clearEditErrors();
+            });
+            
+            // Limpar erros quando o usuário começar a digitar no formulário de edição
+            editNameInput.addEventListener('input', function() {
+                clearEditErrors();
+            });
+            
+            // Configurar botões de edição
+            document.querySelectorAll('.edit-wallet-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const walletId = this.getAttribute('data-wallet-id');
+                    const walletName = this.getAttribute('data-wallet-name');
+                    
+                    editWalletIdInput.value = walletId;
+                    editNameInput.value = walletName;
+                    clearEditErrors();
+                });
+            });
+            
+            // Configurar botão de exclusão
+            document.getElementById('deleteWalletBtn').addEventListener('click', function() {
+                const walletName = editNameInput.value;
+                deleteWalletNameSpan.textContent = walletName;
+                
+                // Fechar modal de edição e abrir modal de confirmação
+                const editModal = bootstrap.Modal.getInstance(editModalElement);
+                editModal.hide();
+                
+                setTimeout(() => {
+                    const deleteModal = new bootstrap.Modal(deleteConfirmModal);
+                    deleteModal.show();
+                }, 300);
+            });
+            
+            // Configurar confirmação de exclusão
+            document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+                const walletId = editWalletIdInput.value;
+                
+                if (!walletId) {
+                    alert('ID da carteira não encontrado');
+                    return;
+                }
+                
+                // Criar dados para exclusão
+                const formData = new FormData();
+                formData.append('action', 'delete');
+                formData.append('wallet_id', walletId);
+                
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                if (!csrfToken) {
+                    alert('Token CSRF não encontrado');
+                    return;
+                }
+                
+                // Adicionar CSRF token ao FormData também
+                formData.append('csrfmiddlewaretoken', csrfToken);
+                
+                fetch(window.location.href, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro na resposta do servidor');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Fechar modal de confirmação
+                        const deleteModal = bootstrap.Modal.getInstance(deleteConfirmModal);
+                        deleteModal.hide();
+                        
+                        // Recarregar a página para mostrar as mudanças
+                        location.reload();
+                    } else {
+                        alert('Erro ao excluir carteira: ' + (data.error || 'Erro desconhecido'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Erro ao excluir carteira: ' + error.message);
+                });
+            });
+            
+            // Configurar formulário de edição
+            editForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                
+                fetch(window.location.href, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        // Mostrar erro
+                        const errorMessage = document.getElementById('edit_error_message');
+                        const errorText = document.getElementById('edit_error_text');
+                        errorText.textContent = data.error || 'Erro ao salvar carteira';
+                        errorMessage.style.display = 'block';
+                        editNameInput.classList.add('is-invalid');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    const errorMessage = document.getElementById('edit_error_message');
+                    const errorText = document.getElementById('edit_error_text');
+                    errorText.textContent = 'Erro ao salvar carteira';
+                    errorMessage.style.display = 'block';
+                    editNameInput.classList.add('is-invalid');
+                });
+            });
+        });
+    </script>
+
+{% endblock %}

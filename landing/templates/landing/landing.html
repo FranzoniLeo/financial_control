@@ -1,0 +1,48 @@
+{% extends "base_header.html" %}
+{% load static %}
+{% block content %}
+
+    <!-- hero -->
+    <section class="hero">
+        <div class="hero-text">
+            <div class="hero-buttons">
+                <a href="{% url 'cadastro' %}" class="btn-primary" style="background-color: #174ea6;">Sign up</a>
+                <a href="#" class="btn-primary" style="background-color: #174ea6;">Show more</a>
+            </div>
+            <h1>Financial Control</h1>
+            <span class="subtitle">4 steps to total control of your applications</span>
+        </div>
+        <div class="hero-image">
+            <img src="{% static 'landing\illustration_landing.png' %}" alt="Financial Control Illustration">
+        </div>
+    </section>
+
+
+    <!-- steps -->
+    <footer class="landing-footer">
+        <div class="row text-center">
+
+            <div class="col card p-3 m-2">
+                <h3>Step 1</h3>
+                <p>Log in to the platform</p>
+            </div>
+        
+            <div class="col card p-3 m-2">
+                <h3>Step 2</h3>
+                <p>Register your applications</p>
+            </div>
+
+            <div class="col card p-3 m-2">
+                <h3>Step 3</h3>
+                <p>Track your income</p>
+            </div>
+
+            <div class="col card p-3 m-2">
+                <h3>Step 4</h3>
+                <p>Enjoy full control of your applications</p>
+            </div>
+
+        </div>
+    </footer>
+
+    {% endblock %}

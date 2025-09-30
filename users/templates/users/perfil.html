@@ -1,0 +1,45 @@
+{% extends "base_header.html" %}
+{% block content %}
+
+    <div class="profile-container">
+        <div class="form-box">
+            <form action= "{% url 'perfil' %}" method = "POST"> {% csrf_token %}
+                
+                <div class="info-box">
+                    <label>Usuário</label>
+                    <input type="text" value="{{ user.username }}" readonly>
+                </div>
+
+                <div class="info-box">
+                    <label>Email</label>
+                    <input type="text" value="{{ user.email }}" readonly>
+                </div>
+                
+                <div class="info-box">
+                    <label>Hobby</label>
+                    <input type="text" value="{{ user.hobby|default:'Não informado' }}" readonly>
+                </div>
+
+                <div class="info-box">
+                    <label>Data de Nascimento</label>
+                    <input type="text" value="{{ user.birth_date|date:'d/m/Y'|default:'Não informado' }}" readonly>
+                </p>
+                </div>
+
+            </form>
+
+            <div class="form-footer">
+                Edit your account? <a href="{% url 'perfil' %}">Click here</a>
+            </div>
+            
+            <!-- Logout -->
+            <div class="logout-section">
+                <a href="{% url 'logout' %}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

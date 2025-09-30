@@ -1,0 +1,303 @@
+{% extends "base_header.html" %}
+{% load static %}
+{% block content %}
+
+    <div class="container mt-4">
+
+        <div class="wallet-header mb-4 p-3 bg-light rounded">
+            <div class = "d-flex justify-content-between align-items-center mb-3">
+                <h2>{{ wallet.name }}</h2>
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary">Voltar</a>
+            </div>
+            <h4>R$: {{ wallet.get_total_balance }}</h4>
+        </div>
+
+        <!-- Seção de Transações -->
+        <h3 class="mb-3">Transações ({{ transactions|length }})</h3>
+        {% for transaction in transactions %}
+            <div class="card mb-2 p-3 transaction-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="transaction-info">
+                         <h5 class="mb-1">
+                             {% if transaction.transaction_type == 'deposit' %}
+                                 <i class="fas fa-arrow-up text-success"></i> Receita
+                             {% elif transaction.transaction_type == 'withdrawal' %}
+                                 <i class="fas fa-arrow-down text-danger"></i> Despesa
+                             {% else %}
+                                 <i class="fas fa-chart-line text-info"></i> Rendimentos
+                             {% endif %}
+                         </h5>
+                        <p class="mb-1">
+                            <strong>Valor:</strong> R$ {{ transaction.amount }}
+                        </p>
+                        {% if transaction.description %}
+                            <p class="mb-1 text-muted">
+                                <strong>Descrição:</strong> {{ transaction.description }}
+                            </p>
+                        {% endif %}
+                        <small class="text-muted">
+                            <strong>Data:</strong> {{ transaction.date|date:"d/m/Y" }}
+                        </small>
+                    </div>
+                    <div class="d-flex align-items-center">
+                         <div class="transaction-amount me-3">
+                             <span class="badge {% if transaction.transaction_type == 'deposit' %}bg-success{% elif transaction.transaction_type == 'withdrawal' %}bg-danger{% else %}bg-info{% endif %} fs-6">
+                                 {% if transaction.transaction_type == 'withdrawal' %}-{% else %}+{% endif %}R$ {{ transaction.amount }}
+                             </span>
+                         </div>
+                        <button type="button" 
+                                class="btn btn-outline-secondary edit-transaction-btn" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#editTransactionModal"
+                                data-transaction-id="{{ transaction.id }}"
+                                 data-transaction-type="{% if transaction.transaction_type == 'deposit' %}income{% elif transaction.transaction_type == 'withdrawal' %}expense{% else %}dividend{% endif %}"
+                                data-transaction-amount="{{ transaction.amount }}"
+                                data-transaction-description="{{ transaction.description|default:'' }}"
+                                data-transaction-date="{{ transaction.date|date:'Y-m-d' }}"
+                                title="Editar transação">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="card mb-2 p-3 text-center text-muted">
+                <p class="mb-0">Nenhuma transação encontrada. Clique no botão + para adicionar uma transação.</p>
+            </div>
+        {% endfor %}
+        
+        <!-- Botão para adicionar transação -->
+        <button type="button" 
+                class="btn btn-success floating-add-transaction-btn" 
+                data-bs-toggle="modal" 
+                data-bs-target="#addTransactionModal"
+                title="Adicionar Transação">
+            <i class="fas fa-plus"></i>
+        </button>
+
+
+    </div>
+
+    <!-- Modal para adicionar nova transação -->
+    <div class="modal fade" id="addTransactionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background-color: #2d3748; color: white; border-radius: 12px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+                
+                <div class="modal-header border-0 pb-0" style="border-bottom: 1px solid #4a5568;">
+                    <h5 class="modal-title fw-bold" style="color: white;">Nova Transação</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+                </div>
+                
+                <div class="modal-body pt-4">
+                    <form method="post" action="{% url 'add_transaction' wallet.id %}" id="transactionForm">
+                        {% csrf_token %}
+                        
+                         <div class="mb-4">
+                             <label class="form-label fw-semibold" style="color: white; margin-bottom: 8px;">Tipo de Transação *</label>
+                             <select class="form-control" name="transaction_type" required style="background-color: #4a5568; border: 1px solid #718096; color: white; border-radius: 8px; padding: 12px;">
+                                 <option value="">Selecione o tipo</option>
+                                 <option value="income">Receita</option>
+                                 <option value="expense">Despesa</option>
+                                 <option value="dividend">Rendimentos</option>
+                             </select>
+                         </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold" style="color: white; margin-bottom: 8px;">Valor *</label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   name="amount" 
+                                   step="0.01"
+                                   min="0"
+                                   placeholder="0.00"
+                                   required
+                                   style="background-color: #4a5568; border: 1px solid #718096; color: white; border-radius: 8px; padding: 12px;">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold" style="color: white; margin-bottom: 8px;">Descrição</label>
+                            <textarea class="form-control" 
+                                      name="description" 
+                                      rows="3"
+                                      placeholder="Descrição da transação..."
+                                      style="background-color: #4a5568; border: 1px solid #718096; color: white; border-radius: 8px; padding: 12px;"></textarea>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="button" 
+                                    class="btn btn-secondary" 
+                                    data-bs-dismiss="modal"
+                                    style="background-color: #718096; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 500;">
+                                Cancelar
+                            </button>
+                            <button type="submit" 
+                                    class="btn btn-primary"
+                                    style="background-color: #174ea6; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 500;">
+                                Adicionar Transação
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+            </div>
+        </div>
+        </div>
+
+        <!-- Modal para editar transação -->
+        <div class="modal fade" id="editTransactionModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="background-color: #2d3748; color: white; border-radius: 12px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+                    
+                    <div class="modal-header border-0 pb-0" style="border-bottom: 1px solid #4a5568;">
+                        <h5 class="modal-title fw-bold" style="color: white;">Editar Transação</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+                    </div>
+                    
+                    <div class="modal-body pt-4">
+                        <form method="post" action="" id="editTransactionForm">
+                            {% csrf_token %}
+                            
+                             <div class="mb-4">
+                                 <label class="form-label fw-semibold" style="color: white; margin-bottom: 8px;">Tipo de Transação *</label>
+                                 <select class="form-control" name="transaction_type" id="editTransactionType" required style="background-color: #4a5568; border: 1px solid #718096; color: white; border-radius: 8px; padding: 12px;">
+                                     <option value="">Selecione o tipo</option>
+                                     <option value="income">Receita</option>
+                                     <option value="expense">Despesa</option>
+                                     <option value="dividend">Rendimentos</option>
+                                 </select>
+                             </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold" style="color: white; margin-bottom: 8px;">Valor *</label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       name="amount" 
+                                       id="editTransactionAmount"
+                                       step="0.01"
+                                       min="0"
+                                       placeholder="0.00"
+                                       required
+                                       style="background-color: #4a5568; border: 1px solid #718096; color: white; border-radius: 8px; padding: 12px;">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold" style="color: white; margin-bottom: 8px;">Data *</label>
+                                <input type="date" 
+                                       class="form-control" 
+                                       name="date" 
+                                       id="editTransactionDate"
+                                       required
+                                       style="background-color: #4a5568; border: 1px solid #718096; color: white; border-radius: 8px; padding: 12px;">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold" style="color: white; margin-bottom: 8px;">Descrição</label>
+                                <textarea class="form-control" 
+                                          name="description" 
+                                          id="editTransactionDescription"
+                                          rows="3"
+                                          placeholder="Descrição da transação..."
+                                          style="background-color: #4a5568; border: 1px solid #718096; color: white; border-radius: 8px; padding: 12px;"></textarea>
+                            </div>
+                            
+                             <div class="d-flex justify-content-between">
+                                 <button type="button" 
+                                         class="btn btn-danger" 
+                                         data-bs-toggle="modal" 
+                                         data-bs-target="#deleteTransactionModal"
+                                         id="deleteTransactionBtn"
+                                         style="background-color: #dc3545; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 500;">
+                                     <i class="fas fa-trash"></i> Excluir
+                                 </button>
+                                 <div class="d-flex gap-2">
+                                     <button type="button" 
+                                             class="btn btn-secondary" 
+                                             data-bs-dismiss="modal"
+                                             style="background-color: #718096; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 500;">
+                                         Cancelar
+                                     </button>
+                                     <button type="submit" 
+                                             class="btn btn-primary"
+                                             style="background-color: #174ea6; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 500;">
+                                         Salvar Alterações
+                                     </button>
+                                 </div>
+                             </div>
+                        </form>
+                    </div>
+                    
+                </div>
+            </div>
+         </div>
+
+         <!-- Modal para confirmar exclusão de transação -->
+         <div class="modal fade" id="deleteTransactionModal" tabindex="-1" aria-hidden="true">
+             <div class="modal-dialog modal-dialog-centered">
+                 <div class="modal-content" style="background-color: #2d3748; color: white; border-radius: 12px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+                     
+                     <div class="modal-header border-0 pb-0" style="border-bottom: 1px solid #4a5568;">
+                         <h5 class="modal-title fw-bold" style="color: white;">Confirmar Exclusão</h5>
+                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+                     </div>
+                     
+                     <div class="modal-body pt-4">
+                         <p class="mb-4" style="color: white; font-size: 16px;">
+                             Tem certeza que deseja excluir esta transação? Esta ação não pode ser desfeita.
+                         </p>
+                         
+                         <div class="d-flex justify-content-end gap-2">
+                             <button type="button" 
+                                     class="btn btn-secondary" 
+                                     data-bs-dismiss="modal"
+                                     style="background-color: #718096; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 500;">
+                                 Cancelar
+                             </button>
+                             <form method="post" action="" id="deleteTransactionForm" style="display: inline;">
+                                 {% csrf_token %}
+                                 <button type="submit" 
+                                         class="btn btn-danger"
+                                         style="background-color: #dc3545; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 500;">
+                                     <i class="fas fa-trash"></i> Excluir
+                                 </button>
+                             </form>
+                         </div>
+                     </div>
+                     
+                 </div>
+             </div>
+         </div>
+
+         <script>
+        // Preencher modal de edição com dados da transação
+        document.addEventListener('DOMContentLoaded', function() {
+            const editButtons = document.querySelectorAll('.edit-transaction-btn');
+            const editModal = document.getElementById('editTransactionModal');
+            const editForm = document.getElementById('editTransactionForm');
+            const deleteForm = document.getElementById('deleteTransactionForm');
+            const deleteBtn = document.getElementById('deleteTransactionBtn');
+            
+            editButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const transactionId = this.getAttribute('data-transaction-id');
+                    const transactionType = this.getAttribute('data-transaction-type');
+                    const transactionAmount = this.getAttribute('data-transaction-amount');
+                    const transactionDescription = this.getAttribute('data-transaction-description');
+                    const transactionDate = this.getAttribute('data-transaction-date');
+                    
+                    // Preencher os campos do formulário
+                    document.getElementById('editTransactionType').value = transactionType;
+                    document.getElementById('editTransactionAmount').value = transactionAmount;
+                    document.getElementById('editTransactionDescription').value = transactionDescription;
+                    document.getElementById('editTransactionDate').value = transactionDate;
+                    
+                    // Atualizar a action do formulário de edição
+                    editForm.action = "{% url 'edit_transaction' wallet.id 0 %}".replace('0', transactionId);
+                    
+                    // Atualizar a action do formulário de exclusão
+                    deleteForm.action = "{% url 'delete_transaction' wallet.id 0 %}".replace('0', transactionId);
+                });
+            });
+        });
+         </script>
+
+    {% endblock %}
