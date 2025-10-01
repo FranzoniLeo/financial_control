@@ -5,30 +5,38 @@
     <!-- conteúdo principal da página-->
     <div class="container">
 
-        <h2>Minhas Carteiras</h2>
-        {% for wallet in wallets %}
-            <div class="card mb-2 p-3 wallet-card">
-                <div class="d-flex justify-content-between align-items-start">
-                    <a href="{% url 'wallet_detail' wallet.id %}" class="text-decoration-none text-dark wallet-link">
-                        <div class="wallet-info">
-                            <h5>{{ wallet.name }}</h5>
-                            <p>Total: R$ {{ wallet.get_total_balance }}</p>
+            <h2>Minhas Carteiras</h2>
+                {% for wallet in wallets %}
+                    <div class="card mb-2 p-3 wallet-card">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <a href="{% url 'wallet_detail' wallet.id %}" class="text-decoration-none text-dark wallet-link">
+                                <div class="wallet-info">
+                                    <h5>{{ wallet.name }}</h5>
+                                    <p>Total: R$ {{ wallet.get_total_balance }}</p>
+                                </div>
+                            </a>
+                            <button type="button" 
+                                    class="btn btn-outline-secondary edit-wallet-btn" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#editWalletModal"
+                                    data-wallet-id="{{ wallet.id }}"
+                                    data-wallet-name="{{ wallet.name }}"
+                                    title="Editar carteira">
+                                <i class="fas fa-edit"></i>
+                            </button>
                         </div>
-                    </a>
-                    <button type="button" 
-                            class="btn btn-outline-secondary edit-wallet-btn" 
-                            data-bs-toggle="modal" 
-                            data-bs-target="#editWalletModal"
-                            data-wallet-id="{{ wallet.id }}"
-                            data-wallet-name="{{ wallet.name }}"
-                            title="Editar carteira">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                </div>
-            </div>
-        {% empty %}
-            <p>Nenhuma carteira encontrada. Clique no botão + para criar sua primeira carteira.</p>
-        {% endfor %}
+                    </div>
+                {% empty %}
+                    <p>Nenhuma carteira encontrada. Clique no botão + para criar sua primeira carteira.</p>
+                {% endfor %}
+
+        <!-- Botão para mostrar todas as transações -->
+        <button type="button" 
+                class="btn btn-info floating-list-btn" 
+                id="showAllTransactionsBtn"
+                title="Ver todas as transações">
+            <i class="fas fa-list"></i>
+        </button>
 
         <!-- Botão para abrir o modal de nova carteira -->
         <button type="button" 
@@ -39,7 +47,6 @@
         </button>
 
     </div>
-
 
     <!-- Modal para adicionar nova carteira -->
     <div class="modal fade" id="addWalletModal" tabindex="-1" aria-hidden="true">
@@ -391,6 +398,12 @@
                     editNameInput.classList.add('is-invalid');
                 });
             });
+        });
+        
+        // Funcionalidade para mostrar todas as transações
+        document.getElementById('showAllTransactionsBtn').addEventListener('click', function() {
+            // Redirecionar para a página de todas as transações
+            window.location.href = '{% url "all_transactions" %}';
         });
     </script>
 

@@ -1,0 +1,245 @@
+{% extends 'base_header.html' %}
+{% load static %}
+
+{% block title %}Gerenciar Token da API{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">🔑 Gerenciar Token da API</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h5>📋 Como usar sua API:</h5>
+                        <p>Use seu token para fazer requisições autenticadas à API. Inclua o token no header:</p>
+                        <code>Authorization: Token SEU_TOKEN_AQUI</code>
+                    </div>
+
+                    {% if has_token %}
+                        <div class="mb-4">
+                            <label class="form-label"><strong>Seu Token:</strong></label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="tokenInput" value="{{ token }}" readonly>
+                                <button class="btn btn-outline-secondary" type="button" onclick="copyToken()">
+                                    📋 Copiar
+                                </button>
+                            </div>
+                            <small class="form-text text-muted">
+                                ⚠️ Mantenha seu token seguro e não compartilhe com ninguém!
+                            </small>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button class="btn btn-warning w-100" onclick="regenerateToken()">
+                                    🔄 Regenerar Token
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <button class="btn btn-danger w-100" onclick="deleteToken()">
+                                    🗑️ Deletar Token
+                                </button>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="text-center">
+                            <p class="mb-4">Você ainda não possui um token. Clique no botão abaixo para gerar um:</p>
+                            <button class="btn btn-primary" onclick="generateToken()">
+                                🔑 Gerar Token
+                            </button>
+                        </div>
+                    {% endif %}
+
+                    <hr class="my-4">
+
+                    <div class="mt-4">
+                        <h5>📚 Exemplos de Uso:</h5>
+                        
+                        <div class="accordion" id="examplesAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#curlExample">
+                                        cURL
+                                    </button>
+                                </h2>
+                                <div id="curlExample" class="accordion-collapse collapse" data-bs-parent="#examplesAccordion">
+                                    <div class="accordion-body">
+                                        <pre><code>curl -H "Authorization: Token {{ token }}" \
+     http://127.0.0.1:8000/finances/api/wallets/</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pythonExample">
+                                        Python
+                                    </button>
+                                </h2>
+                                <div id="pythonExample" class="accordion-collapse collapse" data-bs-parent="#examplesAccordion">
+                                    <div class="accordion-body">
+                                        <pre><code>import requests
+
+headers = {
+    'Authorization': 'Token {{ token }}'
+}
+
+response = requests.get(
+    'http://127.0.0.1:8000/finances/api/wallets/',
+    headers=headers
+)
+
+print(response.json())</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#javascriptExample">
+                                        JavaScript
+                                    </button>
+                                </h2>
+                                <div id="javascriptExample" class="accordion-collapse collapse" data-bs-parent="#examplesAccordion">
+                                    <div class="accordion-body">
+                                        <pre><code>fetch('http://127.0.0.1:8000/finances/api/wallets/', {
+    headers: {
+        'Authorization': 'Token {{ token }}'
+    }
+})
+.then(response => response.json())
+.then(data => console.log(data));</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h5>🔗 Endpoints Disponíveis:</h5>
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <strong>GET</strong> <code>/finances/api/wallets/</code> - Listar carteiras
+                            </li>
+                            <li class="list-group-item">
+                                <strong>POST</strong> <code>/finances/api/wallets/</code> - Criar carteira
+                            </li>
+                            <li class="list-group-item">
+                                <strong>GET</strong> <code>/finances/api/transactions/</code> - Listar transações
+                            </li>
+                            <li class="list-group-item">
+                                <strong>POST</strong> <code>/finances/api/transactions/</code> - Criar transação
+                            </li>
+                            <li class="list-group-item">
+                                <strong>GET</strong> <code>/finances/api/investments/</code> - Listar investimentos
+                            </li>
+                            <li class="list-group-item">
+                                <strong>GET</strong> <code>/finances/api/categories/</code> - Listar categorias
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyToken() {
+    const tokenInput = document.getElementById('tokenInput');
+    tokenInput.select();
+    document.execCommand('copy');
+    
+    // Mostrar feedback visual
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '✅ Copiado!';
+    button.classList.remove('btn-outline-secondary');
+    button.classList.add('btn-success');
+    
+    setTimeout(() => {
+        button.innerHTML = originalText;
+        button.classList.remove('btn-success');
+        button.classList.add('btn-outline-secondary');
+    }, 2000);
+}
+
+function generateToken() {
+    if (confirm('Deseja gerar um novo token? Isso irá substituir qualquer token existente.')) {
+        fetch('/finances/api/generate-token/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                username: '{{ request.user.username }}',
+                password: prompt('Digite sua senha para confirmar:')
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.token) {
+                location.reload();
+            } else {
+                alert('Erro: ' + data.error);
+            }
+        })
+        .catch(error => {
+            alert('Erro ao gerar token: ' + error);
+        });
+    }
+}
+
+function regenerateToken() {
+    if (confirm('Deseja regenerar seu token? O token atual será invalidado.')) {
+        fetch('/finances/api/regenerate-token/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.token) {
+                location.reload();
+            } else {
+                alert('Erro: ' + data.error);
+            }
+        })
+        .catch(error => {
+            alert('Erro ao regenerar token: ' + error);
+        });
+    }
+}
+
+function deleteToken() {
+    if (confirm('Deseja deletar seu token? Você não conseguirá mais usar a API até gerar um novo token.')) {
+        fetch('/finances/api/delete-token/', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                location.reload();
+            } else {
+                alert('Erro: ' + data.error);
+            }
+        })
+        .catch(error => {
+            alert('Erro ao deletar token: ' + error);
+        });
+    }
+}
+</script>
+
+{% csrf_token %}
+{% endblock %}

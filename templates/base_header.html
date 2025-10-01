@@ -29,11 +29,13 @@
                 <a href="{% url 'wallet' %}" class="{% if request.resolver_match.url_name == 'wallet' or request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
                 <a href="{% url 'perfil' %}" class="{% if request.resolver_match.url_name == 'perfil' %}active{% endif %}">Perfil</a>
                 <a href="#">Contatos</a>
+                <a href="{% url 'token_management' %}" class="{% if request.resolver_match.url_name == 'token_management' or 'api' in request.path %}active{% endif %}">Integração</a>
             {% else %}
                 <!-- Navegação para usuários não logados -->
                 <a href="{% url 'landing:home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
                 <a href="{% url 'login' %}">Login</a>
                 <a href="#">Contatos</a>
+                <a href="#">Funcionalidades</a>
             {% endif %}
         </nav>
     </header>

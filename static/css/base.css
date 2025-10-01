@@ -101,7 +101,7 @@ body.landing-page {
 
 .hero-buttons {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 16px;
     margin-bottom: 32px;
 }
@@ -288,6 +288,72 @@ body.authenticated {
     color: #666;
     font-size: 1.1em;
     font-weight: bold;
+}
+
+/* Botão flutuante para mostrar todas as transações */
+.floating-list-btn {
+    position: fixed;
+    bottom: 35%;
+    right: 1%;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: none;
+    background-color: #3b82f6;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.floating-list-btn:hover {
+    background-color: #2563eb;
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+.floating-list-btn:active {
+    transform: scale(0.95);
+}
+
+/* Botão flutuante para gerenciar tokens da API */
+.floating-token-btn {
+    position: fixed;
+    bottom: 20%;
+    right: 1%;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    font-size: 18px;
+    z-index: 1000;
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #000;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+.floating-token-btn:hover {
+    background-color: #e0a800;
+    border-color: #e0a800;
+    color: #000;
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(255, 193, 7, 0.4);
+}
+
+.floating-token-btn:active {
+    transform: scale(0.95);
 }
 
 /* Botão flutuante para adicionar carteira */
