@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .api_views import WalletViewSet, TransactionViewSet, CategoryViewSet, InvestmentViewSet
+from .api_views import WalletViewSet, TransactionViewSet
 from . import token_views
 
 # Criar o router
@@ -9,8 +9,6 @@ router = DefaultRouter()
 # Registrar os ViewSets
 router.register(r'wallets', WalletViewSet)
 router.register(r'transactions', TransactionViewSet)
-router.register(r'categories', CategoryViewSet)
-router.register(r'investments', InvestmentViewSet)
 
 # URLs da API
 urlpatterns = [
@@ -49,10 +47,3 @@ urlpatterns = [
 # DELETE /api/categories/{id}/            - Remove categoria
 # GET    /api/categories/by_wallet/?wallet_id=1 - Categorias por carteira
 
-# GET    /api/investments/                - Lista todos os investimentos
-# POST   /api/investments/                - Cria novo investimento
-# GET    /api/investments/{id}/           - Busca investimento específico
-# PUT    /api/investments/{id}/           - Atualiza investimento completo
-# PATCH  /api/investments/{id}/           - Atualização parcial
-# DELETE /api/investments/{id}/           - Remove investimento
-# GET    /api/investments/{id}/transactions/ - Transações do investimento

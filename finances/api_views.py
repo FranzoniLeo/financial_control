@@ -2,8 +2,8 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Q
-from .models import Wallet, Transaction, Category, Investment
-from .serializers import WalletSerializer, TransactionSerializer, CategorySerializer, InvestmentSerializer
+from .models import Wallet, Transaction
+from .serializers import WalletSerializer, TransactionSerializer
 
 class WalletViewSet(viewsets.ModelViewSet):
     """
@@ -88,8 +88,8 @@ class TransactionViewSet(viewsets.ModelViewSet):
         """Retorna apenas transações do usuário logado"""
         user = self.request.user
         return Transaction.objects.filter(
-            Q(wallet__user=user) | Q(investment__wallet__user=user)
-        ).select_related('wallet', 'investment', 'investment__wallet').order_by('-date', '-created_at')
+            Q(wallet__user=user)
+        ).select_related('wallet').order_by('-date', '-created_at')
     
     @action(detail=False, methods=['get'])
     def by_type(self, request):
@@ -137,52 +137,3 @@ class TransactionViewSet(viewsets.ModelViewSet):
             'total_transactions': queryset.count()
         })
 
-class CategoryViewSet(viewsets.ModelViewSet):
-    """
-    ViewSet para gerenciar categorias.
-    """
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-    permission_classes = [permissions.IsAuthenticated]
-    
-    def get_queryset(self):
-        """Retorna apenas categorias das carteiras do usuário"""
-        return Category.objects.filter(wallet__user=self.request.user)
-    
-    @action(detail=False, methods=['get'])
-    def by_wallet(self, request):
-        """
-        Endpoint customizado: GET /api/categories/by_wallet/?wallet_id=1
-        Retorna categorias de uma carteira específica
-        """
-        wallet_id = request.query_params.get('wallet_id')
-        if wallet_id:
-            queryset = self.get_queryset().filter(wallet_id=wallet_id)
-        else:
-            queryset = self.get_queryset()
-        
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-class InvestmentViewSet(viewsets.ModelViewSet):
-    """
-    ViewSet para gerenciar investimentos.
-    """
-    queryset = Investment.objects.all()
-    serializer_class = InvestmentSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    
-    def get_queryset(self):
-        """Retorna apenas investimentos das carteiras do usuário"""
-        return Investment.objects.filter(wallet__user=self.request.user)
-    
-    @action(detail=True, methods=['get'])
-    def transactions(self, request, pk=None):
-        """
-        Endpoint customizado: GET /api/investments/1/transactions/
-        Retorna todas as transações de um investimento específico
-        """
-        investment = self.get_object()
-        transactions = Transaction.objects.filter(investment=investment).order_by('-date', '-created_at')
-        serializer = TransactionSerializer(transactions, many=True)
-        return Response(serializer.data)

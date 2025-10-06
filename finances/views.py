@@ -27,18 +27,17 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         
         # Total de todas as carteiras
         total = sum([w.get_total_balance() for w in wallets])
-        context['total'] = total
+        context['total'] = float(total)
         
         # Todas as transações de rendimentos do usuário
         from django.db.models import Q
         transactions = Transaction.objects.filter(
-            Q(investment__wallet__user=user, transaction_type="deposit") |
             Q(wallet__user=user, transaction_type="dividend")
         )
         
         # Rendimento total
-        rendimento_total = transactions.aggregate(total_sum=models.Sum("amount"))["total_sum"] or 0
-        context['rendimento_total'] = rendimento_total
+        rendimento_total = transactions.aggregate(total_sum=models.Sum("amount"))["total_sum"]
+        context['rendimento_total'] = float(rendimento_total) if rendimento_total else 0.0
         
         # Datas para filtros
         today = now().date()
@@ -48,16 +47,16 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         start_year = today.replace(month=1, day=1)
         
         # Rendimento mês atual
-        rendimento_mes_atual = transactions.filter(date__gte=start_month).aggregate(total_sum=models.Sum("amount"))["total_sum"] or 0
-        context['rendimento_mes_atual'] = rendimento_mes_atual
+        rendimento_mes_atual = transactions.filter(date__gte=start_month).aggregate(total_sum=models.Sum("amount"))["total_sum"]
+        context['rendimento_mes_atual'] = float(rendimento_mes_atual) if rendimento_mes_atual else 0.0
         
         # Rendimento mês anterior
-        rendimento_mes_anterior = transactions.filter(date__gte=last_month_start, date__lte=last_month_end).aggregate(total_sum=models.Sum("amount"))["total_sum"] or 0
-        context['rendimento_mes_anterior'] = rendimento_mes_anterior
+        rendimento_mes_anterior = transactions.filter(date__gte=last_month_start, date__lte=last_month_end).aggregate(total_sum=models.Sum("amount"))["total_sum"]
+        context['rendimento_mes_anterior'] = float(rendimento_mes_anterior) if rendimento_mes_anterior else 0.0
         
         # Rendimento no ano
-        rendimento_ano = transactions.filter(date__gte=start_year).aggregate(total_sum=models.Sum("amount"))["total_sum"] or 0
-        context['rendimento_ano'] = rendimento_ano
+        rendimento_ano = transactions.filter(date__gte=start_year).aggregate(total_sum=models.Sum("amount"))["total_sum"]
+        context['rendimento_ano'] = float(rendimento_ano) if rendimento_ano else 0.0
         
         return context
     
@@ -148,11 +147,11 @@ def all_transactions_view(request):
     """
     user = request.user
     
-    # Buscar todas as transações do usuário (de carteiras e investimentos)
+    # Buscar todas as transações do usuário (de carteiras)
     from django.db.models import Q
     transactions = Transaction.objects.filter(
-        Q(wallet__user=user) | Q(investment__wallet__user=user)
-    ).select_related('wallet', 'investment', 'investment__wallet').order_by('-date', '-created_at')
+        Q(wallet__user=user)
+    ).select_related('wallet').order_by('-date', '-created_at')
     
     # Calcular total geral (simulando uma carteira principal)
     total_balance = 0

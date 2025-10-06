@@ -12,7 +12,7 @@
                             <a href="{% url 'wallet_detail' wallet.id %}" class="text-decoration-none text-dark wallet-link">
                                 <div class="wallet-info">
                                     <h5>{{ wallet.name }}</h5>
-                                    <p>Total: R$ {{ wallet.get_total_balance }}</p>
+                                    <p>Total: R$ {{ wallet.get_total_balance|floatformat:2 }}</p>
                                 </div>
                             </a>
                             <button type="button" 
@@ -203,27 +203,27 @@
 
             <div class="col card p-3 m-2">
                 <h6>Total</h6>
-                <p>R$ {{ total }}</p>
+                <p>R$ {{ total|floatformat:2 }}</p>
             </div>
 
             <div class="col card p-3 m-2">
                 <h6>Rendimento Total</h6>
-                <p>R$ {{ rendimento_total }}</p>
+                <p>R$ {{ rendimento_total|floatformat:2 }}</p>
             </div>
 
             <div class="col card p-3 m-2">
                 <h6>Rendimento Mês Anterior</h6>
-                <p>R$ {{ rendimento_mes_anterior }}</p>
+                <p>R$ {{ rendimento_mes_anterior|floatformat:2 }}</p>
             </div>
 
             <div class="col card p-3 m-2">
                 <h6>Rendimento Mês Atual</h6>
-                <p>R$ {{ rendimento_mes_atual }}</p>
+                <p>R$ {{ rendimento_mes_atual|floatformat:2 }}</p>
             </div>
 
             <div class="col card p-3 m-2">
                 <h6>Rendimentos no Ano</h6>
-                <p>R$ {{ rendimento_ano }}</p>
+                <p>R$ {{ rendimento_ano|floatformat:2 }}</p>
             </div>
 
         </div>

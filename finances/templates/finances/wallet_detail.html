@@ -34,7 +34,7 @@
                              {% endif %}
                          </h5>
                         <p class="mb-1">
-                            <strong>Valor:</strong> R$ {{ transaction.amount }}
+                            <strong>Valor:</strong> R$ {{ transaction.amount|floatformat:2 }}
                         </p>
                         {% if transaction.description %}
                             <p class="mb-1 text-muted">
@@ -44,14 +44,7 @@
                         {% if is_all_transactions %}
                             <p class="mb-1 text-muted">
                                 <strong>Carteira:</strong> 
-                                {% if transaction.wallet %}
-                                    {{ transaction.wallet.name }}
-                                {% else %}
-                                    {{ transaction.investment.wallet.name }}
-                                    {% if transaction.investment %}
-                                        ({{ transaction.investment.name }})
-                                    {% endif %}
-                                {% endif %}
+                                {{ transaction.wallet.name }}
                             </p>
                         {% endif %}
                         <small class="text-muted">
@@ -61,7 +54,7 @@
                     <div class="d-flex align-items-center">
                          <div class="transaction-amount me-3">
                              <span class="badge {% if transaction.transaction_type == 'deposit' %}bg-success{% elif transaction.transaction_type == 'withdrawal' %}bg-danger{% else %}bg-info{% endif %} fs-6">
-                                 {% if transaction.transaction_type == 'withdrawal' %}-{% else %}+{% endif %}R$ {{ transaction.amount }}
+                                 {% if transaction.transaction_type == 'withdrawal' %}-{% else %}+{% endif %}R$ {{ transaction.amount|floatformat:2 }}
                              </span>
                          </div>
                         {% if not is_all_transactions %}
